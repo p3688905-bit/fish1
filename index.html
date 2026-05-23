@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>濠梁之辯思辨小學堂 - 移動端 UI</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: {
+                            50: '#FCFAF2',
+                            100: '#F5EFE0',
+                            200: '#EBDCBE',
+                            300: '#DCC395',
+                        },
+                        waterTeal: {
+                            50: '#F2FAF7',
+                            100: '#E0F2EC',
+                            200: '#C2E5DB',
+                            500: '#52B297',
+                            600: '#3E947C',
+                            700: '#2C7360',
+                        },
+                        amberGold: {
+                            100: '#FFFBEB',
+                            200: '#FEF3C7',
+                            500: '#F59E0B',
+                        },
+                        softOrange: {
+                            100: '#FFF4EE',
+                            200: '#FFE6D5',
+                            500: '#FFA07A',
+                        }
+                    },
+                    borderRadius: {
+                        'xl-cute': '1.25rem',
+                        '2xl-cute': '2rem',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        
+        body {
+            font-family: 'Noto Sans TC', 'Kosugi Maru', sans-serif;
+            background-color: #ECE5D5;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* 滾動條美化 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FCFAF2;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #C2E5DB;
+            border-radius: 10px;
+        }
+
+        /* 可愛澎澎陰影效果 */
+        .bubble-shadow {
+            box-shadow: 0 8px 0px 0px #D0BFA0;
+        }
+        .btn-bubble {
+            box-shadow: 0 4px 0px 0px rgba(0,0,0,0.1);
+            transition: all 0.1s ease;
+        }
+        .btn-bubble:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0px 0px rgba(0,0,0,0.1);
+        }
+        
+        /* 雲朵漂浮動畫 */
+        @keyframes float {
+            0% { transform: translateY(0px) translateX(0px); }
+            50% { transform: translateY(-6px) translateX(4px); }
+            100% { transform: translateY(0px) translateX(0px); }
+        }
+        .floating-cloud {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        /* 小魚悠游游動動畫 */
+        @keyframes swim {
+            0% { transform: translateX(0px) scaleX(1); }
+            45% { transform: translateX(12px) scaleX(1); }
+            50% { transform: translateX(12px) scaleX(-1); }
+            95% { transform: translateX(0px) scaleX(-1); }
+            100% { transform: translateX(0px) scaleX(1); }
+        }
+        .swimming-fish {
+            animation: swim 6s ease-in-out infinite;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body class="flex justify-center items-center min-h-screen p-0 sm:p-4">
+
+    <div class="relative w-full max-w-md h-[844px] sm:h-[812px] bg-cream-50 sm:rounded-[40px] shadow-2xl overflow-hidden border-8 border-amber-955/20 flex flex-col">
+        
+        <!-- 模擬頂部狀態列 -->
+        <div class="px-6 pt-3 pb-2 flex justify-between items-center text-xs text-amber-955/40 select-none">
+            <span class="font-bold">14:30 🐟 橋 🌊 🪵</span>
+            <div class="flex items-center space-x-1.5">
+                <span>萬物有靈 5G</span>
+                <span>100%🔋</span>
+            </div>
+        </div>
+
+        <!-- 頂部導航標題 -->
+        <header class="px-5 py-3 bg-cream-100 border-b-2 border-cream-200 flex items-center justify-between relative">
+            <div class="flex items-center space-x-2">
+                <!-- 可愛小魚 Logo -->
+                <div class="w-10 h-10 bg-waterTeal-500 rounded-full flex items-center justify-center text-white text-xl shadow-inner font-black swimming-fish">
+                    🐟
+                </div>
+                <div>
+                    <h1 class="text-base font-black text-amber-950 tracking-wide">濠梁之辯思辨小學堂</h1>
+                    <p class="text-[10px] text-amber-900/70 font-bold flex items-center">
+                        <span class="inline-block w-2 h-2 rounded-full bg-waterTeal-500 mr-1 animate-pulse"></span>
+                        當前單元：莊子．秋水選
+                    </p>
+                </div>
+            </div>
+            
+            <!-- 可愛問號按鈕 -->
+            <button onclick="toggleHelpModal(true)" class="w-9 h-9 bg-waterTeal-100 hover:bg-waterTeal-200 border-2 border-waterTeal-500/20 text-waterTeal-600 rounded-full flex items-center justify-center font-bold text-lg btn-bubble">
+                ？
+            </button>
+            
+            <!-- 漂浮背景小雲朵 -->
+            <div class="absolute right-16 top-1 floating-cloud opacity-25 pointer-events-none">
+                <svg class="w-8 h-5 text-waterTeal-500 fill-current" viewBox="0 0 24 16"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
+            </div>
+        </header>
+
+        <!-- 主要內容滾動區 -->
+        <main class="flex-1 overflow-y-auto px-4 py-4 space-y-4 pb-20 relative">
+            
+            <!-- ================= TAB 1: 結構樹 ================= -->
+            <div id="page-structure" class="space-y-4 page-content">
+                <div class="bg-waterTeal-100 rounded-2xl-cute p-4 border-2 border-waterTeal-200 relative overflow-hidden">
+                    <span class="text-[10px] bg-waterTeal-500 text-white font-bold px-2 py-0.5 rounded-full">認識論 & 美學</span>
+                    <h2 class="text-base font-black text-amber-950 mt-2">如何跨越心靈的鴻溝？ 🌉</h2>
+                    <p class="text-xs text-amber-900/80 mt-1 leading-relaxed">莊子欣賞魚在水裡悠然游動，感覺到魚很快樂。惠子則提出理性的質疑：你又不是魚，怎麼能知道魚的感受？點擊展開這場經典對決的邏輯架構：</p>
+                </div>
+
+                <!-- 邏輯結構樹 -->
+                <div class="space-y-3 relative pl-3 border-l-2 border-dashed border-waterTeal-500/30">
+                    
+                    <!-- 核心命題 -->
+                    <div class="relative">
+                        <div class="absolute -left-[19px] top-5 w-2.5 h-2.5 rounded-full bg-waterTeal-500 border-2 border-cream-50"></div>
+                        <div onclick="toggleCard('card-topic')" class="bg-white hover:bg-cream-100/50 p-3.5 rounded-xl-cute border-2 border-amber-955/10 cursor-pointer shadow-sm transition-all">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-bold text-waterTeal-600 bg-waterTeal-100 px-2 py-0.5 rounded">🎯 核心命題</span>
+                                <span id="card-topic-icon" class="text-xs text-amber-955/40">展開 ▾</span>
+                            </div>
+                            <p class="text-sm font-black text-amber-955 mt-1.5">知魚之樂（人能通曉萬物，產生審美共鳴）</p>
+                            <div id="card-topic-detail" class="hidden mt-3 pt-2.5 border-t border-dashed border-amber-950/10 text-xs text-amber-900/80 leading-relaxed">
+                                莊子抱持**「天人合一、萬物有情」**的美學觀，主張人類不需要解剖或做科學檢驗，就能透過心靈的感同身受、審美投射，去體會自然萬物的和諧、自由與快樂。
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 前提一 -->
+                    <div class="relative">
+                        <div class="absolute -left-[19px] top-5 w-2.5 h-2.5 rounded-full bg-softOrange-500 border-2 border-cream-50"></div>
+                        <div onclick="toggleCard('card-premise1')" class="bg-white hover:bg-cream-100/50 p-3.5 rounded-xl-cute border-2 border-amber-955/10 cursor-pointer shadow-sm transition-all">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-bold text-orange-650 bg-softOrange-100 px-2 py-0.5 rounded">💡 莊子前提：感同身受</span>
+                                <span id="card-premise1-icon" class="text-xs text-amber-955/40">展開 ▾</span>
+                            </div>
+                            <p class="text-sm font-black text-amber-955 mt-1.5">物我融通，自我投射（魚之從容即我之從容）</p>
+                            <div id="card-premise1-detail" class="hidden mt-3 pt-2.5 border-t border-dashed border-amber-955/10 text-xs text-amber-900/80 leading-relaxed">
+                                莊子的認知來自於他的主觀直覺與詩意聯想。魚兒在水中輕鬆自在、沒有威脅地遊動，呈現出的「從容」，與他追求絕對自由（逍遙）的精神完全契合，因此他在魚身上體察到了生命之美與生命之樂。
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 前提二 -->
+                    <div class="relative">
+                        <div class="absolute -left-[19px] top-5 w-2.5 h-2.5 rounded-full bg-amberGold-500 border-2 border-cream-50"></div>
+                        <div onclick="toggleCard('card-premise2')" class="bg-white hover:bg-cream-100/50 p-3.5 rounded-xl-cute border-2 border-amber-955/10 cursor-pointer shadow-sm transition-all">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-bold text-amber-850 bg-amberGold-100 px-2 py-0.5 rounded">💡 惠子前提：客觀認識限制</span>
+                                <span id="card-premise2-icon" class="text-xs text-amber-955/40">展開 ▾</span>
+                            </div>
+                            <p class="text-sm font-black text-amber-955 mt-1.5">「子非魚」：主體心靈的邏輯邊界</p>
+                            <div id="card-premise2-detail" class="hidden mt-3 pt-2.5 border-t border-dashed border-amber-955/10 text-xs text-amber-900/80 leading-relaxed">
+                                惠子作為名家（名實邏輯學派），抱持客觀分析態度。他指明：一個生命個體（主體 A）與另一個生命個體（主體 B）存在天然的認知阻礙。你沒有魚的感官、大腦，在邏輯上你「不可能」絕對驗證另一個生物的內部主觀感受。
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 邏輯借力 -->
+                    <div class="relative">
+                        <div class="absolute -left-[19px] top-5 w-2.5 h-2.5 rounded-full bg-sky-400 border-2 border-cream-50"></div>
+                        <div onclick="toggleCard('card-evidence')" class="bg-white hover:bg-cream-100/50 p-3.5 rounded-xl-cute border-2 border-amber-955/10 cursor-pointer shadow-sm transition-all">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-bold text-sky-600 bg-sky-100 px-2 py-0.5 rounded">⚡ 莊子反彈論證</span>
+                                <span id="card-evidence-icon" class="text-xs text-amber-955/40">展開 ▾</span>
+                            </div>
+                            <p class="text-sm font-black text-amber-955 mt-1.5">「子非我，安知我不知魚之樂？」</p>
+                            <div id="card-evidence-detail" class="hidden mt-3 pt-2.5 border-t border-dashed border-amber-955/10 text-xs text-amber-900/80 leading-relaxed">
+                                莊子精妙地使用惠子自身的邏輯武器對付惠子：既然你說「因為我不是魚，我就不能知道魚」，那同理，因為「你不是我」，依據你的理論，你也就絕對不能宣稱「你知道我不知道魚」。直接破壞了惠子質疑立足點。
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 回歸本源 -->
+                    <div class="relative">
+                        <div class="absolute -left-[19px] top-5 w-2.5 h-2.5 rounded-full bg-red-400 border-2 border-cream-50"></div>
+                        <div onclick="toggleCard('card-conclusion')" class="bg-white hover:bg-cream-100/50 p-3.5 rounded-xl-cute border-2 border-amber-955/10 cursor-pointer shadow-sm transition-all">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-bold text-red-600 bg-red-100 px-2 py-0.5 rounded">🏁 回歸當下與語言解構</span>
+                                <span id="card-conclusion-icon" class="text-xs text-amber-955/40">展開 ▾</span>
+                            </div>
+                            <p class="text-sm font-black text-amber-955 mt-1.5">「我知之濠上」：體驗先於證明</p>
+                            <div id="card-conclusion-detail" class="hidden mt-3 pt-2.5 border-t border-dashed border-amber-955/10 text-xs text-amber-900/80 leading-relaxed">
+                                莊子最神的一筆是「循其本（回到提問源頭）」。惠子問「汝**安**知魚樂」，字面上「安」可以是「如何（如何能知道）」或者是「在哪裡（在哪個場所知道）」。莊子將語意幽默地偷換到空間場所：「你問我是在哪裡知道的？我是在這濠水橋梁上，當下在身心契合的體驗中知道的。」這表明生命體驗和審美是直接的、無須證明的。
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ================= TAB 2: 思辨核心 ================= -->
+            <div id="page-core" class="hidden space-y-4 page-content">
+                
+                <!-- 濠梁之辯碰撞流程圖 -->
+                <div class="bg-waterTeal-100 p-4 rounded-2xl-cute border-2 border-waterTeal-200">
+                    <h3 class="text-xs font-bold text-waterTeal-700 tracking-wider text-center uppercase mb-3.5">🌊 莊子 vs 惠子：濠梁思想攻防圖</h3>
+                    
+                    <div class="flex flex-col items-center space-y-2">
+                        <!-- 第一階段 -->
+                        <div class="bg-white border-2 border-amber-950/10 p-3 rounded-xl-cute text-center max-w-[280px] w-full">
+                            <div class="text-[9px] text-softOrange-500 font-bold block">1. 審美發端 (莊子)</div>
+                            <p class="text-[10px] text-amber-955 font-bold mt-1">「鰷魚出遊從容，是魚之樂也。」</p>
+                        </div>
+                        
+                        <!-- 思想碰撞 -->
+                        <div class="flex items-center space-x-2 my-1">
+                            <span class="text-lg font-black text-red-500">⚡ VS ⚡</span>
+                        </div>
+
+                        <!-- 第二階段 -->
+                        <div class="bg-white border-2 border-amber-950/10 p-3 rounded-xl-cute text-center max-w-[280px] w-full">
+                            <div class="text-[9px] text-amber-500 font-bold block">2. 分析性質疑問 (惠子)</div>
+                            <p class="text-[10px] text-amber-955 font-bold mt-1">「子非魚，安知魚之樂？」</p>
+                            <span class="text-[8px] bg-amberGold-100 text-amber-800 px-1 py-0.5 rounded mt-1 inline-block font-black">核心觀點：你與魚是完全不同的主體，無法相通</span>
+                        </div>
+
+                        <!-- 思想碰撞 -->
+                        <div class="flex items-center space-x-2 my-1">
+                            <span class="text-lg font-black text-red-500">⚡ VS ⚡</span>
+                        </div>
+
+                        <!-- 第三階段 -->
+                        <div class="bg-white border-2 border-amber-950/10 p-3 rounded-xl-cute text-center max-w-[280px] w-full">
+                            <div class="text-[9px] text-softOrange-500 font-bold block">3. 邏輯折射與反彈 (莊子)</div>
+                            <p class="text-[10px] text-amber-955 font-bold mt-1">「子非我，安知我不知魚之樂？」</p>
+                            <span class="text-[8px] bg-softOrange-200 text-orange-700 px-1 py-0.5 rounded mt-1 inline-block font-black">核心觀點：照你所言，你也不是我，你豈能否定我？</span>
+                        </div>
+
+                        <!-- 轉化與昇華 -->
+                        <svg class="w-6 h-6 text-waterTeal-500 fill-current" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+
+                        <!-- 第四階段 -->
+                        <div class="bg-waterTeal-500 text-white p-3 rounded-xl-cute text-center max-w-[280px] w-full shadow-sm">
+                            <span class="text-[9px] text-waterTeal-100 font-bold block">4. 循其本與時空回歸 (莊子)</span>
+                            <span class="text-xs font-bold">「我知之濠上也」</span>
+                            <p class="text-[9px] text-waterTeal-50 mt-1 leading-relaxed">
+                                將「安」從「如何知」轉化為「在哪裡知」。<br>
+                                當下經驗即最直接、最完整的真實！
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 經典古文互動閱讀器 -->
+                <div class="bg-white rounded-2xl-cute border-2 border-amber-950/10 p-4 shadow-sm">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-[10px] bg-waterTeal-100 text-waterTeal-700 font-bold px-2 py-0.5 rounded">📜 《莊子·秋水》選段</span>
+                        <span class="text-[10px] text-amber-900/50 font-bold">💡 點擊虛線字看白話與剖析</span>
+                    </div>
+
+                    <!-- 古文原文 -->
+                    <div class="text-amber-955 text-sm leading-8 font-serif tracking-wide text-justify">
+                        莊子與惠子遊於濠梁之上。莊子曰：「鰷魚出遊
+                        <span onclick="showTranslation('從容', '悠閑舒緩、自由自在地游動。莊子以心靈美感直接投射，認定魚此時正享有絕對的安寧與歡樂。')" class="underline decoration-wavy decoration-softOrange-500 font-black cursor-pointer text-orange-650 bg-softOrange-100/35 px-1 rounded hover:bg-softOrange-200">從容</span>
+                        ，是魚之樂也。」<br>
+                        惠子曰：「
+                        <span onclick="showTranslation('子非魚，安知魚之樂', '你又不是魚，你怎麼能（在邏輯上、客觀生理上）知曉魚內在主觀的快樂感受呢？')" class="underline decoration-wavy decoration-amberGold-500 font-black cursor-pointer text-amber-800 bg-amberGold-100/35 px-1 rounded hover:bg-amberGold-200">子非魚，安知魚之樂</span>
+                        ？」<br>
+                        莊子曰：「子非我，安知我不知魚之樂？」<br>
+                        惠子曰：「我非子，固不知子矣；子固非魚也，子之不知魚之樂，全矣！」<br>
+                        莊子曰：「
+                        <span onclick="showTranslation('請循其本', '讓我們先回到這個提問的最初起源。莊子在這裡發動語言框架上的重塑，重新解析惠子的發問前提。')" class="underline decoration-wavy decoration-waterTeal-500 font-black cursor-pointer text-waterTeal-700 bg-waterTeal-100/35 px-1 rounded hover:bg-waterTeal-200">請循其本</span>
+                        。子曰『汝安知魚樂』云者，既已知吾知之而問我，
+                        <span onclick="showTranslation('我知之濠上也', '我是在這濠水橋梁上，當下透過心靈共感體會、直接感覺到的。「安」本義亦有「在哪裡」之意，莊子藉由這個語意雙關，直接打破了冷酷的邏輯拆解，回歸於生命的當下體驗。')" class="underline decoration-wavy decoration-red-400 font-black cursor-pointer text-red-650 bg-red-50 px-1 rounded hover:bg-red-100">我知之濠上也</span>
+                        。」
+                    </div>
+
+                    <!-- 互動翻譯解說面板 -->
+                    <div id="translation-card" class="hidden mt-4 p-3 bg-cream-100 border-2 border-dashed border-waterTeal-500/30 rounded-xl-cute transition-all">
+                        <div class="flex justify-between items-center mb-1">
+                            <span id="trans-word" class="text-xs font-black text-waterTeal-700">字詞：</span>
+                            <button onclick="closeTranslation()" class="text-xs text-amber-955/40 hover:text-amber-950">關閉 ✕</button>
+                        </div>
+                        <p id="trans-text" class="text-xs text-amber-900/80 leading-relaxed font-bold">載入中...</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ================= TAB 3: 思辨工具 ================= -->
+            <div id="page-tools" class="hidden space-y-4 page-content">
+                
+                <!-- 邏輯謬誤檢測機 -->
+                <div class="bg-white rounded-2xl-cute border-2 border-amber-950/10 p-4 shadow-sm">
+                    <div class="flex items-center space-x-2 mb-3">
+                        <span class="text-xl">🤖</span>
+                        <h3 class="text-sm font-black text-amber-955">心靈感應與邏輯謬誤檢測機</h3>
+                    </div>
+                    <p class="text-xs text-amber-900/60 mb-3">在探討「同理心、心靈隔閡與理解他人」時，我們容易犯哪些邏輯上的盲區？點擊診斷：</p>
+                    
+                    <!-- 謬誤選項 -->
+                    <div class="space-y-2">
+                        <button onclick="detectFallacy(1)" class="w-full text-left p-2.5 text-xs bg-cream-100 hover:bg-waterTeal-100/50 border border-amber-955/10 rounded-lg font-bold text-amber-955 flex justify-between items-center transition-all">
+                            <span>💬 「我們根本不是同一個大腦，所以任何人都不可能真正同理、理解別人的痛苦！」</span>
+                            <span class="text-amber-900/50">分析 ➔</span>
+                        </button>
+                        <button onclick="detectFallacy(2)" class="w-full text-left p-2.5 text-xs bg-cream-100 hover:bg-waterTeal-100/50 border border-amber-955/10 rounded-lg font-bold text-amber-955 flex justify-between items-center transition-all">
+                            <span>💬 「這隻小熊娃娃看起來哭得好傷心，我們一定要去抱抱安撫牠！」</span>
+                            <span class="text-amber-900/50">分析 ➔</span>
+                        </button>
+                        <button onclick="detectFallacy(3)" class="w-full text-left p-2.5 text-xs bg-cream-100 hover:bg-waterTeal-100/50 border border-amber-955/10 rounded-lg font-bold text-amber-955 flex justify-between items-center transition-all">
+                            <span>💬 「當被問到『你怎麼知道』時，直接用『我是在橋上知道的』來搪塞，這不就是耍無賴玩文字遊戲嗎？」</span>
+                            <span class="text-amber-900/50">分析 ➔</span>
+                        </button>
+                    </div>
+
+                    <!-- 謬誤分析面板 -->
+                    <div id="fallacy-result" class="hidden mt-4 p-3.5 bg-waterTeal-100 rounded-xl-cute border-2 border-waterTeal-500/20">
+                        <h4 id="fallacy-title" class="text-xs font-black text-waterTeal-700">檢測結果：</h4>
+                        <p id="fallacy-desc" class="text-xs text-amber-900/80 mt-1.5 leading-relaxed font-bold">說明...</p>
+                    </div>
+                </div>
+
+                <!-- 互動思辨挑戰賽 -->
+                <div class="bg-white rounded-2xl-cute border-2 border-amber-950/10 p-4 shadow-sm">
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xl">🏆</span>
+                            <h3 class="text-sm font-black text-amber-955">濠梁之辯智慧大挑戰</h3>
+                        </div>
+                        <span class="text-[10px] bg-amberGold-200 text-amber-800 font-extrabold px-1.5 py-0.5 rounded-full">+15 積分</span>
+                    </div>
+                    
+                    <p class="text-xs font-bold text-amber-900 mb-3">【思辨題】莊子對惠子反彈反詰說：「子非我，安知我不知魚之樂？」，其最精準的邏輯策略是：</p>
+                    
+                    <!-- 選項 -->
+                    <div class="space-y-2">
+                        <button onclick="answerQuiz(this, false)" class="quiz-option w-full text-left p-2.5 text-xs bg-cream-100 hover:bg-cream-200/50 border border-amber-955/10 rounded-lg font-bold text-amber-955 transition-all">
+                            A) 訴諸感性：激發惠子也去濠梁下看魚游來游去，共享大自然的好心情。
+                        </button>
+                        <button onclick="answerQuiz(this, true)" class="quiz-option w-full text-left p-2.5 text-xs bg-cream-100 hover:bg-cream-200/50 border border-amber-955/10 rounded-lg font-bold text-amber-955 transition-all">
+                            B) 歸謬反彈法（以子之矛攻子之盾）：依循惠子「非同一主體即無法相互了解」的前提，推出「你也不是我，因此你根本無權宣稱你了解我的認知界限」，當場使惠子的邏輯立足點崩潰。
+                        </button>
+                        <button onclick="answerQuiz(this, false)" class="quiz-option w-full text-left p-2.5 text-xs bg-cream-100 hover:bg-cream-200/50 border border-amber-955/10 rounded-lg font-bold text-amber-955 transition-all">
+                            C) 循環論證：不斷強調魚真的很快樂，只要用心看就一定看得出來。
+                        </button>
+                    </div>
+
+                    <div id="quiz-feedback" class="hidden mt-3 text-xs font-bold text-center"></div>
+                </div>
+
+            </div>
+
+            <!-- ================= TAB 4: 我的筆記 ================= -->
+            <div id="page-notes" class="hidden space-y-4 page-content">
+                
+                <!-- 筆記編輯器 -->
+                <div class="bg-white rounded-2xl-cute border-2 border-amber-955/10 p-4 shadow-sm">
+                    <div class="flex justify-between items-center mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xl">✍️</span>
+                            <h3 class="text-sm font-black text-amber-955">萬物逍遙與語言哲學筆記</h3>
+                        </div>
+                        <span class="text-[10px] text-amber-900/40">自動存檔</span>
+                    </div>
+
+                    <!-- 筆記可愛印章 -->
+                    <div class="flex space-x-2 mb-3">
+                        <span class="text-xs text-amber-900/60 self-center font-bold">蓋上印章:</span>
+                        <button onclick="addStamp('🎨 主觀审美')" class="bg-waterTeal-100 hover:bg-waterTeal-200 text-waterTeal-800 text-xs px-2.5 py-1 rounded-full font-bold btn-bubble">🎨 主觀审美</button>
+                        <button onclick="addStamp('🧠 現象學知覺')" class="bg-softOrange-100 hover:bg-softOrange-200 text-orange-700 text-xs px-2.5 py-1 rounded-full font-bold btn-bubble">🧠 現象學知覺</button>
+                    </div>
+
+                    <textarea id="note-input" rows="4" class="w-full p-3 bg-cream-100 border-2 border-dashed border-amber-955/20 rounded-xl-cute text-xs text-amber-955 focus:outline-none focus:border-waterTeal-500 font-bold" placeholder="在此記下您對「同理心是否可能、分析理性與主觀美的平衡、當下心靈直覺」的思考吧..."></textarea>
+                    
+                    <button onclick="saveNote()" class="mt-3 w-full py-2.5 bg-waterTeal-500 hover:bg-waterTeal-600 text-white font-black text-xs rounded-xl-cute btn-bubble">
+                        寫入思辨竹簡 💾
+                    </button>
+                </div>
+
+                <!-- 已存筆記列表 -->
+                <div class="space-y-3">
+                    <h3 class="text-xs font-black text-amber-900/80 px-1">🗂 歷史竹簡歸檔</h3>
+                    <div id="notes-list" class="space-y-2">
+                        <!-- 系統預設經典筆記 -->
+                        <div class="bg-amberGold-100 p-3.5 rounded-xl-cute border border-amberGold-200 relative overflow-hidden">
+                            <div class="absolute right-2 top-2 text-[10px] bg-amberGold-200 text-amber-900 px-1.5 py-0.5 rounded-full font-black">🧠 心靈現象學</div>
+                            <p class="text-xs text-amber-955 font-bold leading-relaxed mt-2">
+                                「濠梁之辯」看似文字遊戲，實則直擊了西方近代哲學中核心的「他人心靈問題（Problem of Other Minds）」與語言語意學（Semantics）。惠子像一位科學家、實證主義者：人非魚，心靈阻絕。而莊子則是一名現象學家：生命的真實不在於經過科學證明的物理指標，而是在於當下的「物我共融、相看兩不厭」。莊子最後將「安」轉移成空間場所「我知之濠上也」，是極其厲害的去中心化解構——當你問我「你怎麼知道」時，你已經將認識論逼入「自我孤島」的死胡同。我打破你死硬的邏輯，回到眼前潺潺的流水 and 悠游的小魚。這種超越懷疑論、直面生活當下的直覺，何其溫柔而逍遙！
+                            </p>
+                            <span class="block text-[10px] text-amber-900/40 mt-2">導師推薦筆記庫</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+
+        <!-- 幫助說明彈窗 -->
+        <div id="help-modal" class="hidden absolute inset-0 bg-amber-955/40 backdrop-blur-sm z-30 flex justify-center items-center p-6">
+            <div class="bg-white w-full max-w-xs rounded-3xl-cute border-4 border-waterTeal-200 p-5 shadow-2xl relative">
+                <button onclick="toggleHelpModal(false)" class="absolute right-4 top-4 w-7 h-7 bg-cream-100 text-amber-955 rounded-full font-bold text-xs flex items-center justify-center border hover:bg-cream-200">✕</button>
+                
+                <div class="text-center space-y-3 mt-2">
+                    <span class="text-4xl">🌊🐟🌉</span>
+                    <h3 class="text-base font-black text-amber-950">濠梁之辯思辨指南</h3>
+                    <p class="text-xs text-amber-800/80 leading-relaxed font-bold">
+                        歡迎來到主觀審美與邏輯辯駁小課堂！我們將透過這堂課，剖析歷史中最著名的「心靈相通與認識論極限」公案：
+                    </p>
+                    <ul class="text-left text-xs text-amber-800/80 space-y-1.5 list-disc list-inside font-bold bg-cream-100 p-3 rounded-xl-cute border border-cream-200">
+                        <li>在「結構樹」中釐清莊子的「同感美學」與惠子的「實證論述」對立。</li>
+                        <li>點擊「辯難原文」看莊子如何透過雙關，逃逸邏輯解構回歸橋上體驗。</li>
+                        <li>用「邏輯謬誤檢測」剖析我們是否容易陷入認知主體隔絕、孤島化。</li>
+                        <li>在挑戰賽中領悟莊子「知之濠上」的大智慧。</li>
+                    </ul>
+                    <button onclick="toggleHelpModal(false)" class="w-full py-2 bg-waterTeal-500 hover:bg-waterTeal-600 text-white font-black text-xs rounded-xl-cute btn-bubble">
+                        開啟智慧探索！
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 自訂 Toast 提示框 -->
+        <div id="custom-toast" class="hidden absolute top-16 left-1/2 transform -translate-x-1/2 bg-amber-955/90 text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg z-50 flex items-center space-x-1">
+            <span id="toast-icon">✨</span>
+            <span id="toast-msg">已儲存！</span>
+        </div>
+
+        <!-- 手機版底部導航列 -->
+        <nav class="absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t-2 border-cream-200 py-2.5 px-4 flex justify-around items-center z-20">
+            <!-- Tab 1: 結構 -->
+            <button onclick="switchTab('structure')" id="nav-structure" class="nav-btn flex flex-col items-center space-y-0.5 text-waterTeal-500 font-black">
+                <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.4z"/></svg>
+                <span class="text-[10px]">物我結構</span>
+            </button>
+
+            <!-- Tab 2: 核心 -->
+            <button onclick="switchTab('core')" id="nav-core" class="nav-btn flex flex-col items-center space-y-0.5 text-amber-955/40 font-bold hover:text-waterTeal-500">
+                <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.1-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.35-.75-2-1zM3 18.5V7c1.1-.35 2.3-.5 3.5-.5 1.35 0 2.8.25 4 .75v11.5c-1.2-.5-2.65-.75-4-.75-1.2 0-2.4.15-3.5.5zm18 0c-1.1-.35-2.3-.5-3.5-.5-1.35 0-2.8.25-4 .75V7.25c1.2-.5 2.65-.75 4-.75 1.2 0 2.4.15 3.5.5v11.5z"/></svg>
+                <span class="text-[10px]">濠梁原文</span>
+            </button>
+
+            <!-- Tab 3: 工具 -->
+            <button onclick="switchTab('tools')" id="nav-tools" class="nav-btn flex flex-col items-center space-y-0.5 text-amber-955/40 font-bold hover:text-waterTeal-500">
+                <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/></svg>
+                <span class="text-[10px]">邏輯謬誤</span>
+            </button>
+
+            <!-- Tab 4: 筆記 -->
+            <button onclick="switchTab('notes')" id="nav-notes" class="nav-btn flex flex-col items-center space-y-0.5 text-amber-955/40 font-bold hover:text-waterTeal-500">
+                <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                <span class="text-[10px]">思辨筆記</span>
+            </button>
+        </nav>
+
+    </div>
+
+    <!-- 邏輯腳本處理 -->
+    <script>
+        // 1. Tab 切換功能
+        function switchTab(tabId) {
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.add('hidden');
+            });
+            document.getElementById(`page-${tabId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-waterTeal-500', 'font-black');
+                btn.classList.add('text-amber-955/40', 'font-bold');
+            });
+            
+            const activeNav = document.getElementById(`nav-${tabId}`);
+            activeNav.classList.remove('text-amber-955/40', 'font-bold');
+            activeNav.classList.add('text-waterTeal-500', 'font-black');
+        }
+
+        // 2. 卡片摺疊面板
+        function toggleCard(cardId) {
+            const detail = document.getElementById(`${cardId}-detail`);
+            const icon = document.getElementById(`${cardId}-icon`);
+            if (detail.classList.contains('hidden')) {
+                detail.classList.remove('hidden');
+                icon.innerText = '收起 ▴';
+            } else {
+                detail.classList.add('hidden');
+                icon.innerText = '展開 ▾';
+            }
+        }
+
+        // 3. 古文解說卡片
+        function showTranslation(word, text) {
+            const card = document.getElementById('translation-card');
+            const transWord = document.getElementById('trans-word');
+            const transText = document.getElementById('trans-text');
+            
+            transWord.innerText = `💡 剖析：【${word}】`;
+            transText.innerText = text;
+            card.classList.remove('hidden');
+        }
+
+        // 關閉解說
+        function closeTranslation() {
+            document.getElementById('translation-card').classList.add('hidden');
+        }
+
+        // 4. 邏輯謬誤檢測機 (修復：移除了不小心加載頭部的註解，完全解決 SyntaxError)
+        function detectFallacy(type) {
+            const resultBox = document.getElementById('fallacy-result');
+            const title = document.getElementById('fallacy-title');
+            const desc = document.getElementById('fallacy-desc');
+
+            resultBox.classList.remove('hidden');
+
+            if (type === 1) {
+                title.innerText = '🤖 檢測結果：不當訴諸絕對認知孤島 (Solipsistic Epistemic Fallacy)';
+                desc.innerText = '這犯了唯我論（Solipsism）的教條偏差。雖然物理上我們確實被大腦的生理骨壁隔絕（主體障礙），但人類發展出了「鏡像神經元」與高度的「社會化同理心結構」。透過表情、語意、身體姿態，我們可以產生近乎實時的、可高精度驗證的跨主體主觀共感（Intersubjectivity）。將理論障礙無限推導至「完全不能感同身受他人」，就忽視了人類的心智演化成果。';
+            } else if (type === 2) {
+                title.innerText = '🤖 檢測結果：過度擬人化與主觀投射謬誤 (Anthropomorphic Projection Fallacy)';
+                desc.innerText = '這犯了日常生活中典型的「擬人化歸因」。玩具熊並非生物，沒有主觀情感與痛覺感受能力。我們的「憐憫和哀傷」完全是我們大腦的單向投影。對死物的審美投影雖然可愛，但在嚴格的邏輯、科學討論中，必須將其與生物具備的主觀心靈感受進行本質區分。';
+            } else if (type === 3) {
+                title.innerText = '🤖 檢測結果：精準的語意框架逃脫 (Semantic Frame Escape)';
+                desc.innerText = '嚴格來說，這不是個不自覺的語意謬誤，而是莊子故意而為之的「語言與邏輯戰術」。古代漢語中，「安」具有「如何」與「在哪裡」的雙重語意特徵（Polysemy）。惠子試圖在「如何證明」的認識論上擊倒莊子，但莊子看出這是一個邏輯上的無限退行死結，因此他幽默、優雅地將語意退回空間「我在濠水橋上知道的」。這並非耍無賴，而是禪宗式的當頭棒喝——打破空洞虛無的「思辨死鎖」，重新引導主體回到最直接、切身的生活實踐經驗中。';
+            }
+        }
+
+        // 5. 互動小挑戰
+        let quizAnswered = false;
+        function answerQuiz(btn, isCorrect) {
+            if (quizAnswered) return;
+
+            const feedback = document.getElementById('quiz-feedback');
+            
+            document.querySelectorAll('.quiz-option').forEach(opt => {
+                opt.classList.add('opacity-50');
+            });
+            btn.classList.remove('opacity-50');
+
+            if (isCorrect) {
+                btn.classList.remove('bg-cream-100');
+                btn.classList.add('bg-waterTeal-200', 'border-waterTeal-500');
+                feedback.innerHTML = '🎉 邏輯分析完全正確！五星好評！<br><span class="text-[11px] font-normal text-amber-900/80">莊子的「子非我，安知我不知魚之樂？」是哲學史上的神級防守反擊。如果你（惠子）非要建立「你不是另一個個體，你就不可能知道另一個個體」的硬底前提，那很好！依據你自己的大前提，因為「你（惠子）不是我（莊子）」，你當然也「絕對不可能知道我知不知道魚之樂」。這在邏輯學上是極其精妙的「歸謬法」和「投射反彈」。</span>';
+                feedback.className = 'mt-3 text-xs font-bold text-waterTeal-750 block';
+                showToast('✨ 挑戰成功！獲得 15 積分！');
+            } else {
+                btn.classList.remove('bg-cream-100');
+                btn.classList.add('bg-softOrange-200', 'border-softOrange-500');
+                feedback.innerHTML = '❌ 哎呀，選錯了，再找回理智想想！<br><span class="text-[11px] font-normal text-amber-900/80">提示：注意「子非我」與先前惠子質疑「子非魚」的對應結構。莊子是用惠子的前提來否定惠子提問的正當性，這是最典型、最具破壞力的逻辑以彼之道還施彼身。</span>';
+                feedback.className = 'mt-3 text-xs font-bold text-orange-600 block';
+                showToast('😢 答錯了，請再想想！');
+            }
+            quizAnswered = true;
+        }
+
+        // 6. 蓋上筆記印章 (修復：解開了函數宣告的註解，正常綁定點擊事件)
+        function addStamp(stampText) {
+            const input = document.getElementById('note-input');
+            input.value = `[${stampText}] ` + input.value;
+            input.focus();
+            showToast(`已貼上「${stampText}」標籤！`);
+        }
+
+        // 7. 儲存筆記
+        function saveNote() {
+            const input = document.getElementById('note-input');
+            const text = input.value.trim();
+            if (!text) {
+                showToast('❌ 請寫一點內容再存檔喔！');
+                return;
+            }
+
+            const notesList = document.getElementById('notes-list');
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            const bgClasses = ['bg-waterTeal-100/60', 'bg-softOrange-100/60', 'bg-amberGold-100'];
+            const randomBg = bgClasses[Math.floor(Math.random() * bgClasses.length)];
+
+            const noteNode = document.createElement('div');
+            noteNode.className = `${randomBg} p-3.5 rounded-xl-cute border border-amber-955/10 relative overflow-hidden transition-all duration-300`;
+            noteNode.innerHTML = `
+                <p class="text-xs text-amber-955 font-bold leading-relaxed">${text}</p>
+                <span class="block text-[10px] text-amber-900/40 mt-2">創建於 ${timeStr}</span>
+            `;
+
+            notesList.insertBefore(noteNode, notesList.firstChild);
+            input.value = '';
+            showToast('💾 筆記已寫入竹簡！');
+        }
+
+        // 8. 幫助視窗開關
+        function toggleHelpModal(show) {
+            const modal = document.getElementById('help-modal');
+            if (show) {
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        // 9. 自訂彈窗提示 (Toast)
+        function showToast(message) {
+            const toast = document.getElementById('custom-toast');
+            const msgSpan = document.getElementById('toast-msg');
+            msgSpan.innerText = message;
+            
+            toast.classList.remove('hidden');
+            toast.style.opacity = '1';
+            
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 2500);
+        }
+    </script>
+</body>
+</html>
